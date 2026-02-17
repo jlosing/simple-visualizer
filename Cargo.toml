@@ -1,0 +1,17 @@
+[package]
+name = "rust-visualizer"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+csv = "1.4.0"
+color-eyre = "0.6.5"
+cpal = "0.17"
+rustfft = "6.2"
+ratatui = "0.30"
+crossterm = "0.29"
+ringbuf = "0.4"
+num-complex = "0.4"
+once_cell = "1.21.3"
