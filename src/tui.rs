@@ -3,6 +3,7 @@ use ratatui::{
     crossterm::event::{self, Event, KeyCode, KeyEventKind},
     layout::{Constraint, Layout},
     style::{Color, Modifier, Style, Stylize},
+    symbols,
     text::Line,
     widgets::{Bar, BarChart, BarGroup, Block, BorderType, Borders},
     DefaultTerminal, Frame,
@@ -19,6 +20,18 @@ const SMOOTHING_FACTOR: f32 = 0.2;
 const COLOR_LOW: Color = Color::Green;
 const COLOR_MID: Color = Color::Yellow;
 const COLOR_HIGH: Color = Color::Red;
+
+const PIPE_SET: symbols::bar::Set = symbols::bar::Set {
+    full: "│",
+    seven_eighths: "│",
+    three_quarters: "│",
+    five_eighths: "│",
+    half: "│",
+    three_eighths: "│",
+    one_quarter: "│",
+    one_eighth: "│",
+    empty: " ",
+};
 
 pub struct App {
     bands: Vec<u64>,
@@ -162,7 +175,7 @@ impl App {
             .max(100)
             .bar_width(self.bar_width)
             .bar_gap(self.bar_gap)
-            .bar_style(Style::default().fg(Color::Green))
+            .bar_set(PIPE_SET)
             .value_style(
                 Style::default()
                     .fg(Color::White)
