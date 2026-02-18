@@ -2,7 +2,7 @@ use color_eyre::Result;
 use ratatui::{
     crossterm::event::{self, Event, KeyCode, KeyEventKind},
     layout::{Constraint, Layout},
-    style::{Color, Modifier, Style, Stylize},
+    style::{Color, Style, Stylize},
     symbols,
     text::Line,
     widgets::{Bar, BarChart, BarGroup, Block, BorderType, Borders},
@@ -21,15 +21,15 @@ const COLOR_LOW: Color = Color::Green;
 const COLOR_MID: Color = Color::Yellow;
 const COLOR_HIGH: Color = Color::Red;
 
-const PIPE_SET: symbols::bar::Set = symbols::bar::Set {
-    full: "│",
-    seven_eighths: "│",
-    three_quarters: "│",
-    five_eighths: "│",
-    half: "│",
-    three_eighths: "│",
-    one_quarter: "│",
-    one_eighth: "│",
+const THICK_BAR_SET: symbols::bar::Set = symbols::bar::Set {
+    full: "▬",
+    seven_eighths: "▬",
+    three_quarters: "▬",
+    five_eighths: "▬",
+    half: "▬",
+    three_eighths: "▬",
+    one_quarter: "▬",
+    one_eighth: "▬",
     empty: " ",
 };
 
@@ -109,16 +109,15 @@ impl App {
         let areas = Layout::vertical([
             Constraint::Length(1), // Header
             Constraint::Min(0),    // Main Chart (Takes remaining space)
-            Constraint::Length(1), // Footer
         ])
         .split(frame.area());
 
-        let [header_area, chart_area, footer_area] = [areas[0], areas[1], areas[2]];
+        let [header_area, chart_area] = [areas[0], areas[1]];
 
         let title = Line::from(vec![
-            " 🎵 AUDIO VISUALIZER ".bold().white(),
+            " simple-visualizer ".bold().white(),
             " | ".dark_gray(),
-            "FFT Analysis".cyan(),
+            " By jlosing ".cyan(),
         ]);
         frame.render_widget(title.centered(), header_area);
 
@@ -136,25 +135,19 @@ impl App {
         let chart_block = Block::default()
             .borders(Borders::ALL)
             .border_type(BorderType::Rounded) // Smooth corners
-            .title(" Frequency Spectrum ")
+            .title(" 16 Band EQ ")
             .title_style(Style::default().fg(Color::Cyan));
 
         let chart_inner_area = chart_block.inner(chart_area);
         frame.render_widget(chart_block, chart_area);
         frame.render_widget(self.make_barchart(), chart_inner_area);
-
-        let footer = Line::from("Press 'q' to exit")
-            .style(Style::default().fg(Color::DarkGray))
-            .centered();
-        frame.render_widget(footer, footer_area);
     }
 
     pub fn make_barchart(&self) -> BarChart<'_> {
         let bars: Vec<Bar> = self
             .bands
             .iter()
-            .enumerate()
-            .map(|(i, &value)| {
+            .map(|&value| {
                 let color = if value > 75 {
                     COLOR_HIGH
                 } else if value > 40 {
@@ -165,7 +158,8 @@ impl App {
 
                 Bar::default()
                     .value(value)
-                    .label(Line::from(format!("{}", i)).centered())
+                    .text_value("")
+                    // .label(Line::from(format!("{}", i + 1)).centered())
                     .style(Style::default().fg(color))
             })
             .collect();
@@ -175,11 +169,7 @@ impl App {
             .max(100)
             .bar_width(self.bar_width)
             .bar_gap(self.bar_gap)
-            .bar_set(PIPE_SET)
-            .value_style(
-                Style::default()
-                    .fg(Color::White)
-                    .add_modifier(Modifier::BOLD),
-            )
+            .bar_set(THICK_BAR_SET)
+            .value_style(Style::default().fg(Color::Reset))
     }
 }

@@ -17,5 +17,9 @@ fn main() -> Result<()> {
 
     ratatui::restore();
 
-    app_result
+    if let Err(e) = app_result {
+        eprintln!("Application error: {e}");
+    }
+
+    std::process::exit(0);
 }
